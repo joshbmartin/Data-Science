@@ -1,0 +1,186 @@
+---
+title: "Assignment 5"
+author: "Josh martin"
+date: "July 12,2016"
+output: html_document
+---
+
+<style type="text/css">
+
+body, td {
+   font-size: 16px;
+}
+code.r{
+  font-size: 16px;
+}
+pre {
+  font-size: 16px
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Assignment 5 Solutions
+
+### Problem 3 Assignment 1
+The Fibonacci sequence is the following sequence, where the first two terms are both 1 and each term thereafter is the sum of the previous two terms: 1, 1, 2, 3, 5, 8, 13, etc. Write a little R program to find and print the first 30 terms of this sequence. Print them as a simple table that indicates which of these are even, and which are divisible by 3. (Hint: Notice how a number is tested for being even in the code for the Collatz conjecture example.)
+
+#### Solution
+```{r}
+fib.old <- 0
+fib <- 1
+fib.new <- 1
+for (i in 1:30) {
+    cat(i, "\t", fib.new)
+    if (fib.new %% 2 == 0)
+       cat(" even")
+    if (fib.new %% 3 == 0)
+       cat(" div3 ")
+    cat("\n")
+    fib.new <- fib + fib.old
+    fib.old <- fib
+    fib <- fib.new
+}
+```
+
+
+
+### Problem 1 Assignment 2
+Square roots can be found using the following algorithm. Suppose we wish to find the square root of a positive number a. Let the first guess or approximation of the square root be x1 = 1. Then let the next approximation be x2 = (x1 + a/x1)/2. Then let the third approximation be x3 = (x2 + a/x2)/2. If we keep going, the successive approximations will converge quickly to the square root of a.
+
+For example, if we wish to find 31/2, we end up with
+
+x1 = 1
+x2 = 2
+x3 = 1.75
+x4 = 1.732143
+x5 = 1.732051 
+```{r}
+f <- function(a, digits=4) {
+  if (a < 0)
+    stop("input must be nonnegative\n")
+  x <- 1
+  old.x <- a
+  i <- 1
+  tolerance <- 10^(-digits)
+  while (abs(x - old.x)>tolerance) {
+    old.x <- x
+    cat(i,", ", round(x,digits=digits),"\n",sep="")
+    x <- (x + a/x)/2
+    i <- i + 1
+  }
+}
+```
+
+We verify this does what it's meant to do:
+```{r}
+f(3)
+```
+
+```{r}
+f(3,digits=6)
+```
+
+```{r}
+f(50,digits=3)
+```
+
+```{r eval=FALSE}
+f(-4)
+```
+Error in f(-4): input must be nonnegative
+
+
+### Problem 4 Assignment 2
+Create a list that contains the following:
+
+a vector patients containing the names of five patients;
+a vector age containing ages in years for these patients;
+a vector gender containing codes "M" or "F" for each patient;
+a vector BMI containing BMI (body mass index) for each patient (these are typically between 18 and 40); and
+a vector TCH containing total cholesterol values for each patient (these are typically between 100 and 300).
+(Use your imagination to fill in the data.)
+
+Demonstrate two different ways of accessing: The name of the third patient; the TCH of the fourth patient.
+```{r}
+patient <- c("Hailey Lewis", "Alejandro Walker", "Jayden Clark", 
+           "Zoey Martinez", "Sophia Rogers")
+age <- c(46, 32, 20, 68, 42)
+gender <- c("F", "M", "M", "F", "F")
+bmi <- c(23, 29, 27, 32, 37)
+TCH <- c(192, 203, 298, 196, 221)
+L <- list(patient=patient, age=age, gender=gender,
+          bmi=bmi, TCH=TCH)
+```
+
+
+Now we can access the name of the third patient:
+```{r}
+L[[1]][3]
+```
+
+```{r}
+L$patient[3]
+```
+
+or the total cholesterol of the fourth patient:
+
+```{r}
+L[[5]][4]
+```
+
+```{r}
+L$TCH[4]
+```
+
+
+### Problem 4 Assignment 4
+The coordinates for this problem are given by the following R code:
+```{r}
+# star 1
+x1 <- c(0.954, 4.496, 0.815, 3.23, 3.004, 0.954)
+y1 <- c(2.731, 4.119, 5.078, 2.138, 5.935, 2.731)
+# star 2
+x2 <- c(4.259, 9.934, 4.993, 7.314, 8.5, 4.259)
+y2 <- c(4.78, 5.376, 8.229, 3.016, 8.598, 4.78)
+```
+
+Produce the following plot. The respective line widths are 6 and 12. (The line widths in the legend are both 5.) The two star colors are <code>"lightsalmon"</code> and <code>"lightgoldenrod"</code> respectively. You may use different colors if you wish, but only if they're interesting (not <code>"red"</code> or <code>"blue"</code>, for example). Google might find you cheat sheets showing R colors.
+
+#### Solution
+
+```{r eval=FALSE, fig.width=5, fig.height=5, echo=TRUE}
+plot(x1,y1,col="lightsalmon",type="l",
+     lwd=6,xlim=c(0,10),ylim=c(0,10),
+     main="Stars", xlab="x coord", ylab="y coord")
+lines(x2,y2,col="lightgoldenrod",lwd=12)
+legend(0,10,c("star 1","star 2"),lty=c(1,1),lwd=5,
+       col=c("lightsalmon","lightgoldenrod"))
+```
+
+#### Solution
+
+(Here, I added two lines of code at the beginning, just to make sure where my plot gets saved.)
+
+```{r eval=FALSE, fig.width=5, fig.height=5, echo=TRUE}
+setwd("C:/Users/Josh/Documents/Data")
+pdf("stars.pdf")
+plot(x1,y1,col="lightsalmon",type="l",
+     lwd=6,xlim=c(0,10),ylim=c(0,10),
+     main="Stars", xlab="x coord", ylab="y coord")
+lines(x2,y2,col="lightgoldenrod",lwd=12)
+legend(0,10,c("star 1","star 2"),lty=c(1,1),lwd=5,
+       col=c("lightsalmon","lightgoldenrod"))
+dev.off()
+```
+
+## Stars Plot
+```{r fig.width=5, fig.height=5, echo=FALSE}
+plot(x1,y1,col="lightsalmon",type="l",
+     lwd=6,xlim=c(0,10),ylim=c(0,10),
+     main="Stars", xlab="x coord", ylab="y coord")
+lines(x2,y2,col="lightgoldenrod",lwd=12)
+legend(0,10,c("star 1","star 2"),lty=c(1,1),lwd=5,
+       col=c("lightsalmon","lightgoldenrod"))
+```
