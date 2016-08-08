@@ -1,0 +1,225 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(error = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(comment = NA)
+```
+
+<style type="text/css">
+
+body, td {
+   font-size: 16px;
+}
+code.r{
+  font-size: 16px;
+}
+pre {
+  font-size: 16px;
+}
+code {
+  color: blue;
+}
+div.sol {
+ color: darkblue;
+}
+</style>
+
+
+## Final Exam
+### August 8, 2016
+
+### Problem 1
+Write a program that finds the sum of the first n odd numbers, for every number n from 1 to 10.  (Hint: the kth odd number is <code>2*k - 1</code>.)
+
+```{r}
+# your solution:
+odd <- seq(from=1, to=10, by=2)
+cat(odd)
+sum(odd)
+```
+
+### Problem 2
+Suppose the following data pertain to eight infants in a neonatal intensive care unit. (Here, <code>GAweeks</code> is gestational age in weeks.) 
+
+Create a data frame <code>DF</code> using this data, where <code>name</code> is not a factor but <code>gender</code> is a factor. 
+
+Infants who are at least 36 weeks and less than 40 weeks gestational age are considered "late pre-term". Select those infants in the data given that are late pre-term.
+
+```{r}
+name <- c("Clara Phillips", "Evelyn Phillips", "Aliyah Flores", 
+          "Makayla Ramirez", "Joshua Cooper", "Alejandro Sanchez", 
+          "Alejandro Reed", "Ivan King")
+GAweeks <- c(25.6, 27.7, 37.3, 39.4, 38.3, 30, 25.4, 29.1)
+gender <- c("F", "F", "F", "F", "M", "M", "M", "M")
+```
+
+```{r}
+# your solution:
+DF <- data.frame(I(name), GAweeks, gender)
+subset(DF, GAweeks>=36 & GAweeks<40 )
+```
+
+### Problem 3
+In people who do not have diabetes, normal fasting blood glucose levels are at least 70 and below 100 mg/dL; a level below 70 is considered hypoglycemia, and a level at or above 100 is considered hyperglycemia. 
+
+Write a function that returns "hypoglycemic" if the level is below 70, "normal" if the level is at least 70 and less than 100, and "hyperglycemic" if the level is 100 or greater. 
+
+Write a function that applies this function to every member of a numeric vector, returning a vector of type character. Demonstrate your function on the vector <code>x</code> below.
+
+```{r}
+x <- c(112, 92, 112, 86, 52, 82, 74, 80, 43, 93, 68, 145)
+```
+
+
+```{r}
+# your solution
+funct <- function(x){
+  if(x < 70){
+    cat("hypoglycemic\n")
+  }else if(x > 100){
+    cat("hyperglycemic\n")
+  }else if(x >= 70 & x <= 100){
+    cat("normal\n")
+  }
+}
+l <- sapply(x, funct, simplify = TRUE)
+Filter(Negate(is.null),l)
+as.character(x)
+```
+
+### Problem 4
+Read in the NHANES demography and glucose databases. (These are the <code>demo_h.csv</code> and <code>glu_h.csv</code> files available in Canvas/Files. Please read them in using <code>as.is=TRUE</code>, so that everything is numerical or character-valued, not factors.) 
+
+Clean the demography database as follows: Use the <code>dplyr</code> function <code>select</code> to keep and rename the variables <code>SEQN</code>, <code>RIDAGEYR</code> (age), and  <code>RIAGENDR</code> (gender). Then use <code>filter</code> and <code>complete.cases</code> to remove <code>NA</code> missing values.
+
+Now prepare the glucose database as follows:  Use <code>select</code> to rename/keep the variables <code>seqn</code> and <code>LBXGLU</code> (fasting glucose in mg/dL). Then remove <code>NA</code> missing values.
+
+Perform an <code>inner_join</code> on the databases, to create a new database <code>DF</code>, matching the <code>seqn</code> variables. 
+
+Finally, use <code>mutate</code> and the function you created in the last problem to create a new variable <code>glucat</code> that indicates for each value of the <code>glucose</code> variable whether it was hypoglycemic, normal, or hyperglycemic.
+
+Verify things worked using <code>head(DF)</code>; you should see all of the variables you renamed and kept.
+```{r message=FALSE, warning=FALSE}
+# your solution
+setwd("/users/omfgitsjoshlol/Desktop/r programming/")
+demo <- read.csv("demo_h.csv", as.is=TRUE)
+glu <- read.csv("glu_h.csv", as.is=TRUE)
+library(dplyr)
+demo <- select(demo, seqn=SEQN, age=RIDAGEYR, gender=RIAGENDR)
+demo <- filter(demo, complete.cases(demo))
+str(demo)
+
+glu <- select(glu, seqn=SEQN, lbxglu=LBXGLU)
+glu <- filter(glu, complete.cases(glu))
+str(glu)
+
+DF <- inner_join(demo, glu, by="seqn")
+g <- function(x){sapply(x,funct)}
+DF <- mutate(DF, glucat=g(DF))
+head(DF)
+```
+
+### Problem 5
+Simulate the expected value (average win or loss) of the random variable given by the win or loss in playing the following game: Two balls are drawn <e>with replacement</e> from an urn that contains 1 red ball and 4 white balls, and you win $10 if both balls are red but you lose $1 otherwise. Try simulating 10,000 plays of the game. Find the total winnings or losses, and then the average win or loss per game.
+
+```{r}
+# your solution:
+set.seed(456)
+
+```
+
+### Problem 6
+Suppose heights of 21-year-old women are normally distributed, with a mean of 63.3 inches, and a standard deviation of 2.2 inches. Find the probability that a randomly selected 21-year-old woman is at least 65 inches tall. What height corresponds to the 90th percentile of heights of 21-year-old women?
+
+```{r}
+# your solution
+#prob
+pnorm(q=65, mean=63.3, sd=2.2)
+#90th percentile
+qnorm(p=.90, mean=63.3, sd=2.2)
+```
+
+### Problem 7
+Simulate a random sample of length 1000 of a normal random variable with mean 5 and standard deviation 2. What is the mean of your random sample, and what is the sample standard deviation of your random sample? Draw a density histogram of your random sample, and draw a normal density curve of mean 5 and standard deviation 2 over the histogram to demonstrate that the histogram fits the normal distribution. <i>Hint:</i> This is not a problem to simulate the Central Limit Theorem; just simulate the distribution itself, not means of random samples from the distribution.
+
+```{r}
+# your solution
+set.seed(123)
+sample <- rnorm(1000, mean=5, sd=2)
+#sample mean
+mean(sample)
+#sample standard deviation
+sd(sample)
+x <- seq(from=-1, to=12, by=0.5)
+y <- dnorm(x, mean=5, sd=2)
+hist(sample, freq=FALSE, xlim=c(-1,12), col="green")
+lines(x,y,col="black",lwd=2)
+
+```
+
+
+### Problem 8
+The first twenty heights and weights from the NHANES data are given below. (Heights are in cm, and weights are in kg.) Perform a linear regression for weights as predicted by heights. Draw a scatter plot of weights and heights (with height as the x variable and weight as the y variable), and show the regression line on your scatter plot. Give the R-squared value, and the coefficient for height. What do these numbers tell you?
+
+```{r}
+height <- c(171.3, 176.8, 175.3, 137.3, 162.4, 158.7, 161.8, 152.8, 
+            172.4, 152.5, 135.5, 172.5, 145.4, 158.38, 158, 170.4, 
+            166.2, 175.2, 161, 161.4)
+weight <- c(78.3, 89.5, 88.9, 32.2, 52, 105, 93.4, 61.8, 65.3, 
+            47.1, 31.9, 102.4, 41.7, 50.1, 56.8, 67.3, 79.7, 
+            109.4, 40.2, 93.5)
+```
+
+```{r}
+# your solution
+plot(height, weight, col="green")
+res <- lm(weight ~ height)
+abline(res, col="red")
+summary(res)
+```
+
+```{r echo=FALSE}
+cat("R-Squared is 0.5264 & Coefficient of height is 1.5075")
+cat("R squared tells us the fraction of the variation in the y-coordinates 
+    that is explained by the variation in x-coordinates or how well x data
+    predicts y data. So in this case 53% of people that are heavier is due to height. ")
+cat("Coefficient for height tells us the slope of the line. Which means that for every increase by one unit in the weight we go up by 1.5075 in height")
+```
+
+
+### Problem 9
+The following are the first twenty heights (in cm) from the NHANES data. Perform a one-sample t-test to obtain a 90% confidence interval for the <b>mean</b> height.
+
+```{r}
+height <- c(171.3, 176.8, 175.3, 137.3, 162.4, 158.7, 161.8, 152.8, 
+            172.4, 152.5, 135.5, 172.5, 145.4, 158.38, 158, 170.4, 
+            166.2, 175.2, 161, 161.4)
+```
+
+```{r}
+# your solution:
+t.test(height, conf.level = 0.90)
+```
+
+### Problem 10
+Use the bootstrap technique to estimate a 90% confidence interval for the <b>mean</b> of the heights (from the previous problem). Draw a density curve for the mean, based on your boostrap calculation. (Use <code>N = 1000</code> resamples.) This should be close to your confidence interval for the mean in the previous problem.
+
+
+```{r}
+# your solution:
+set.seed(123)
+n <- length(height)
+N <- 1000
+means <- c()
+for(i in 1:N){
+  y <- sample(height, size=n, replace=TRUE)
+  means[i] <- mean(y)
+}
+plot(density(means),col="blue",lwd=2)
+t.test(height, conf.level=0.90)
+
+```
