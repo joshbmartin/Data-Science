@@ -1,2 +1,3 @@
 # Statistical-Programming
-Work/Assignments throughout the course. Work may be incomplete.
+
+Work/Assignments throughout the course. Some work may be incomplete.
